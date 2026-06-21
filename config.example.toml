@@ -1,0 +1,51 @@
+# ghfetch configuration
+
+[display]
+# Set to false to hide sections
+show_avatar = true
+show_system_info = true
+show_header = false
+show_greeting = true
+show_contributions = true
+
+# Avatar width in characters (auto-detected if not set)
+# avatar_width = 30
+
+# Use Nerd Font icons instead of ghost emojis
+nerd_font_icons = false
+
+# Max weeks to show in contribution graph
+max_contrib_weeks = 53
+
+[cache]
+# Cache TTL in hours
+avatar_ttl_hours = 24
+profile_ttl_hours = 1
+contributions_ttl_hours = 2
+
+# Cache directory (relative paths resolve from $HOME)
+cache_dir = ".cache/ghfetch"
+
+# GitHub username (default)
+# username = "hustavojhon"
+
+# GitHub token for higher API rate limits (optional)
+# Set via GITHUB_TOKEN env var or here
+# github_token = "ghp_xxxxxxxxxxxx"
+
+[icons]
+# Override the default ghost icon (emoji or Nerd Font glyph)
+# ghost = "👻"
+
+# Override specific section icons (used when nerd_font_icons = true)
+[icons.overrides]
+# os = "󰻀"
+# kernel = "󰌽"
+# cpu = "󰻠"
+# ram = "󰘚"
+# disk = "󰋊"
+# shell = ""
+# terminal = ""
+# resolution = "󰹑"
+# uptime = "󰅐"
+# arch = "󰘣"
