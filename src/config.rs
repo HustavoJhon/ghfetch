@@ -71,7 +71,7 @@ pub struct IconsConfig {
 }
 
 fn default_username() -> String {
-    "hustavojhon".to_string()
+    String::new()
 }
 
 fn default_cache_ttl_avatar() -> u64 {
