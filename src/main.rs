@@ -14,8 +14,8 @@ use std::time::Instant;
 #[derive(Parser)]
 #[command(name = "ghfetch", version, about = "A Neofetch-inspired CLI for GitHub profiles")]
 struct Cli {
-    #[arg(short, long, default_value = "hustavojhon")]
-    username: String,
+    #[arg(short, long)]
+    username: Option<String>,
 
     #[arg(short = 'c', long)]
     config: Option<String>,
@@ -42,6 +42,33 @@ struct Cli {
     nerd_font_icons: bool,
 }
 
+fn detect_github_user() -> Option<String> {
+    if let Ok(out) = std::process::Command::new("git")
+        .args(["config", "--global", "github.user"])
+        .output()
+    {
+        let s = String::from_utf8_lossy(&out.stdout).trim().to_string();
+        if !s.is_empty() {
+            return Some(s);
+        }
+    }
+
+    if let Ok(out) = std::process::Command::new("gh")
+        .args(["auth", "status"])
+        .output()
+    {
+        let s = String::from_utf8_lossy(&out.stdout);
+        for line in s.lines() {
+            if let Some(idx) = line.find("Logged in to github.com as ") {
+                let rest = &line[idx + "Logged in to github.com as ".len()..];
+                return Some(rest.trim().to_string());
+            }
+        }
+    }
+
+    None
+}
+
 fn main() {
     let start = Instant::now();
     let cli = Cli::parse();
@@ -51,7 +78,22 @@ fn main() {
     }
 
     let mut config = config::load();
-    config.username = cli.username;
+
+    if let Some(ref u) = cli.username {
+        config.username = u.clone();
+    }
+
+    if config.username.is_empty() {
+        if let Some(detected) = detect_github_user() {
+            config.username = detected;
+        } else {
+            eprintln!("ghfetch: no se pudo detectar tu usuario de GitHub.");
+            eprintln!("  Configuralo con:  ghfetch -u TU_USUARIO");
+            eprintln!("  O en el archivo:  ~/.config/ghfetch/config.toml");
+            eprintln!("  O ejecuta:        git config --global github.user TU_USUARIO");
+            std::process::exit(1);
+        }
+    }
 
     if cli.no_avatar {
         config.display.show_avatar = false;
