@@ -5,13 +5,26 @@ BOLD="\033[1m"
 GREEN="\033[38;2;152;151;26m"
 YELLOW="\033[38;2;215;153;33m"
 AQUA="\033[38;2;104;157;106m"
-ORANGE="\033[38;2;214;93;14m"
 RESET="\033[0m"
 
 echo -e "${BOLD}${GREEN}  ghfetch installer${RESET}\n"
 
-echo -e "${AQUA}Tu usuario de GitHub:${RESET}"
-read -r GITHUB_USER
+DETECTED=$(git config --global github.user 2>/dev/null || true)
+if [ -z "$DETECTED" ]; then
+    if command -v gh &>/dev/null; then
+        DETECTED=$(gh auth status 2>&1 | grep "Logged in to github.com as" | sed 's/.*as //' | tr -d ' ')
+    fi
+fi
+
+if [ -n "$DETECTED" ]; then
+    echo -e "${AQUA}Usuario detectado: ${YELLOW}${DETECTED}${RESET}"
+    echo -e "Presiona Enter para confirmar o escribe otro:"
+    read -r INPUT
+    GITHUB_USER="${INPUT:-$DETECTED}"
+else
+    echo -e "${AQUA}Tu usuario de GitHub:${RESET}"
+    read -r GITHUB_USER
+fi
 GITHUB_USER="${GITHUB_USER:-hustavojhon}"
 
 echo -e "\n${AQUA}Token de GitHub (opcional, para mas rate limit):${RESET}"
