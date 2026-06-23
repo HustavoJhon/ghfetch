@@ -123,23 +123,24 @@ fn main() {
         .map(|(w, _)| w.0 as usize)
         .unwrap_or(80);
 
-    let avatar_width = config.display.avatar_width.unwrap_or({
-        if term_width >= 140 {
-            50
-        } else if term_width >= 120 {
-            42
-        } else if term_width >= 100 {
-            34
-        } else if term_width >= 80 {
-            26
-        } else {
-            18
-        }
-    });
-
     let github_client = github::GitHubClient::new(config.github_token.clone(), cache.clone());
 
     let profile = github_client.fetch_profile(&config.username, config.cache.profile_ttl_hours);
+
+    let system = system::gather();
+
+    let contributions = if config.display.show_contributions {
+        github_client.fetch_contributions(&config.username, config.cache.contributions_ttl_hours)
+    } else {
+        None
+    };
+
+    let right_height = renderer::right_panel_height(&system, contributions.as_ref(), &config);
+    let desired_width = (right_height as f64 * 2.0) as usize;
+    let max_avatar_width = term_width.saturating_sub(45);
+    let avatar_width = config.display.avatar_width.unwrap_or_else(|| {
+        desired_width.clamp(16, max_avatar_width.max(16))
+    });
 
     let avatar = if config.display.show_avatar {
         if let Some(ref p) = profile {
@@ -153,14 +154,6 @@ fn main() {
         } else {
             None
         }
-    } else {
-        None
-    };
-
-    let system = system::gather();
-
-    let contributions = if config.display.show_contributions {
-        github_client.fetch_contributions(&config.username, config.cache.contributions_ttl_hours)
     } else {
         None
     };

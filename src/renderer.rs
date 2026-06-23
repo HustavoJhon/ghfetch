@@ -5,6 +5,26 @@ use crate::github::ContributionData;
 use crate::system::SystemInfo;
 use crate::theme::{Ansi, Gruvbox, Icons};
 
+pub fn right_panel_height(
+    system: &SystemInfo,
+    contributions: Option<&ContributionData>,
+    config: &Config,
+) -> usize {
+    let sys = build_system_lines(system, config, None).len();
+    let contrib = if config.display.show_contributions {
+        if let Some(c) = contributions {
+            contributions::render_graph(c, config.display.max_contrib_weeks)
+                .lines()
+                .count()
+        } else {
+            0
+        }
+    } else {
+        0
+    };
+    sys + 1 + contrib
+}
+
 pub struct Output {
     pub lines: Vec<String>,
 }
