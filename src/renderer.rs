@@ -19,85 +19,88 @@ pub fn render(
         .map(|(w, _)| w.0 as usize)
         .unwrap_or(80);
 
-    let layout = determine_layout(term_width, avatar.map(|a| a.width).unwrap_or(0));
+    let sys_lines = build_system_lines(system, config, None);
+
+    let mut contrib_lines: Vec<String> = Vec::new();
+    if config.display.show_contributions {
+        if let Some(contrib) = contributions {
+            let graph = contributions::render_graph(contrib, config.display.max_contrib_weeks);
+            contrib_lines = graph.lines().map(|l| l.to_string()).collect();
+        }
+    }
+
+    let right_lines: Vec<String> = sys_lines
+        .iter()
+        .chain(std::iter::once(&String::new()))
+        .chain(contrib_lines.iter())
+        .cloned()
+        .collect();
+
+    let av_lines = avatar
+        .map(|a| a.lines.clone())
+        .unwrap_or_default();
+
+    let avatar_width = av_lines.first().map(|l| strip_ansi(l).chars().count()).unwrap_or(0);
+    let padding = if avatar_width > 0 { 4usize } else { 0 };
+    let right_width = term_width.saturating_sub(avatar_width + padding);
 
     let mut lines: Vec<String> = Vec::new();
     lines.push(String::new());
 
-    match layout {
-        Layout::Horizontal {
-            _avatar_width: _,
-            info_width,
-        } => {
-            let av_lines = avatar
-                .map(|a| a.lines.clone())
-                .unwrap_or_else(|| vec![String::new()]);
-            let info_lines = build_system_lines(system, config, Some(info_width));
+    let max_height = av_lines.len().max(right_lines.len());
 
-            let total_av_height = av_lines.len();
-            let total_info_height = info_lines.len();
-            let max_height = total_av_height.max(total_info_height);
+    for i in 0..max_height {
+        let mut line = String::new();
+        let av = av_lines.get(i);
+        let ri = right_lines.get(i);
 
-            for i in 0..max_height {
-                let mut line = String::new();
-                let av = av_lines.get(i);
-                let inf = info_lines.get(i);
-
-                match (av, inf) {
-                    (Some(a), Some(inf)) => {
-                        let clean_av = strip_ansi(a);
-                        let width = clean_av.chars().count();
-                        line.push_str(a);
-                        let padding = 4usize
-                            .saturating_sub(width.saturating_sub(av_lines[0].len()));
-                        if padding > 0 {
-                            line.push_str(&" ".repeat(padding));
-                        }
-                        line.push_str("  ");
-                        line.push_str(inf);
-                    }
-                    (Some(a), None) => {
-                        line.push_str(a);
-                    }
-                    (None, Some(inf)) => {
-                        let av_width = av_lines
-                            .first()
-                            .map(|l| strip_ansi(l).chars().count())
-                            .unwrap_or(0);
-                        line.push_str(&" ".repeat(av_width + 4));
-                        line.push_str(inf);
-                    }
-                    (None, None) => {}
-                }
-                lines.push(line);
-            }
+        if let Some(a) = av {
+            line.push_str(a);
+            let clean = strip_ansi(a).chars().count();
+            let fill = avatar_width.saturating_sub(clean) + padding;
+            line.push_str(&" ".repeat(fill));
+        } else if avatar_width > 0 {
+            line.push_str(&" ".repeat(avatar_width + padding));
         }
-        Layout::Vertical => {
-            if let Some(a) = avatar {
-                for line in &a.lines {
-                    lines.push(line.clone());
-                }
-                lines.push(String::new());
-            }
 
-            for line in build_system_lines(system, config, None) {
-                lines.push(line);
-            }
+        if let Some(r) = ri {
+            let truncated = truncate_to_width(r, right_width);
+            line.push_str(&truncated);
         }
-    }
-    lines.push(String::new());
 
-    if config.display.show_contributions {
-        if let Some(contrib) = contributions {
-            lines.push(contributions::render_graph(
-                contrib,
-                config.display.max_contrib_weeks,
-            ));
-        }
+        lines.push(line);
     }
 
     lines.push(String::new());
     Output { lines }
+}
+
+fn truncate_to_width(s: &str, max_width: usize) -> String {
+    if strip_ansi(s).chars().count() <= max_width {
+        return s.to_string();
+    }
+    let mut result = String::new();
+    let mut visible = 0usize;
+    let mut chars = s.chars();
+    while let Some(c) = chars.next() {
+        if c == '\x1b' {
+            result.push(c);
+            while let Some(n) = chars.next() {
+                result.push(n);
+                if n == 'm' {
+                    break;
+                }
+            }
+        } else {
+            if visible >= max_width {
+                break;
+            }
+            visible += 1;
+            result.push(c);
+        }
+    }
+    result.push_str("\x1b[0m");
+    result
 }
 
 fn strip_ansi(s: &str) -> String {
@@ -117,7 +120,7 @@ fn strip_ansi(s: &str) -> String {
     result
 }
 
-fn build_system_lines(system: &SystemInfo, config: &Config, max_width: Option<usize>) -> Vec<String> {
+fn build_system_lines(system: &SystemInfo, config: &Config, _max_width: Option<usize>) -> Vec<String> {
     let icon = |key: &str| -> String {
         if config.display.nerd_font_icons {
             config.icons.overrides.get(key)
@@ -158,45 +161,8 @@ fn build_system_lines(system: &SystemInfo, config: &Config, max_width: Option<us
     for (key, value_str, label_str, color) in &items {
         let icon_str = fmt_icon(key, *color);
         let full = format!("{} {}  {}", icon_str, fmt_lbl(label_str, *color), fmt_val(value_str, *color));
-        if let Some(mw) = max_width {
-            if strip_ansi(&full).chars().count() > mw {
-                let short = format!("{} {}  {}", icon_str, fmt_lbl(label_str, *color), fmt_val(value_str, *color));
-                lines.push(short);
-            } else {
-                lines.push(full);
-            }
-        } else {
-            lines.push(full);
-        }
+        lines.push(full);
     }
 
     lines
-}
-
-#[derive(Debug)]
-enum Layout {
-    Horizontal {
-        _avatar_width: usize,
-        info_width: usize,
-    },
-    Vertical,
-}
-
-fn determine_layout(term_width: usize, avatar_width: usize) -> Layout {
-    if avatar_width == 0 {
-        return Layout::Vertical;
-    }
-
-    let info_min = 42;
-    let min_side_by_side = avatar_width + 4 + info_min;
-
-    if term_width >= min_side_by_side {
-        let remaining = term_width.saturating_sub(avatar_width + 4);
-        Layout::Horizontal {
-            _avatar_width: avatar_width,
-            info_width: remaining.min(80),
-        }
-    } else {
-        Layout::Vertical
-    }
 }

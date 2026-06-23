@@ -124,14 +124,16 @@ fn main() {
         .unwrap_or(80);
 
     let avatar_width = config.display.avatar_width.unwrap_or({
-        if term_width >= 120 {
-            35
+        if term_width >= 140 {
+            50
+        } else if term_width >= 120 {
+            42
         } else if term_width >= 100 {
-            28
+            34
         } else if term_width >= 80 {
-            22
+            26
         } else {
-            16
+            18
         }
     });
 
