@@ -182,49 +182,85 @@ impl GitHubClient {
     }
 
     fn parse_contributions_html(html: &str) -> Option<ContributionData> {
-        let mut weeks = Vec::new();
-        let mut total = 0u32;
-
         let table_start = html.find("<table")?;
         let table_end = html[table_start..].find("</table>")?;
         let table = &html[table_start..table_start + table_end + 8];
 
-        let mut week_days = Vec::new();
+        let total = Self::extract_total_from_html(html).unwrap_or(0);
+
+        let mut cells: Vec<(usize, usize, ContributionDay)> = Vec::new();
+        let mut max_col = 0usize;
+
         for line in table.lines() {
-            if line.contains("<td") {
-                let data_level = extract_attr(line, "data-level");
-                let data_date = extract_attr(line, "data-date").unwrap_or("");
-                let count = data_level
-                    .and_then(|s| s.parse::<u32>().ok());
-                let color = match data_level {
-                    Some("0") | None => "#282828",
-                    Some("1") => "#0e4429",
-                    Some("2") => "#006d32",
-                    Some("3") => "#26a641",
-                    Some("4") => "#39d353",
-                    _ => "#282828",
-                };
-                let c = count.unwrap_or(0);
-                total += c;
-                week_days.push(ContributionDay {
-                    count: c,
-                    color: color.to_string(),
-                    date: data_date.to_string(),
-                });
-                if week_days.len() == 7 {
-                    weeks.push(ContributionWeek { days: week_days });
-                    week_days = Vec::new();
-                }
+            if !line.contains("data-level") {
+                continue;
+            }
+            let data_level = extract_attr(line, "data-level");
+            let data_date = extract_attr(line, "data-date").unwrap_or("");
+
+            let id_attr = extract_attr(line, "id").unwrap_or("");
+            let parts: Vec<&str> = id_attr.rsplitn(3, '-').collect();
+            let row = parts.get(1).and_then(|s| s.parse::<usize>().ok()).unwrap_or(0);
+            let col = parts.get(0).and_then(|s| s.parse::<usize>().ok()).unwrap_or(0);
+
+            let count = match data_level {
+                Some("0") | None => 0,
+                Some("1") => 3,
+                Some("2") => 8,
+                Some("3") => 17,
+                Some("4") => 130,
+                _ => 0,
+            };
+
+            cells.push((row, col, ContributionDay {
+                count,
+                color: String::new(),
+                date: data_date.to_string(),
+            }));
+
+            if col > max_col {
+                max_col = col;
             }
         }
-        if !week_days.is_empty() {
-            weeks.push(ContributionWeek { days: week_days });
-        }
 
-        if weeks.is_empty() {
+        if cells.is_empty() {
             return None;
         }
+
+        let num_cols = max_col + 1;
+        let mut weeks: Vec<Vec<ContributionDay>> = vec![Vec::new(); num_cols];
+
+        for (row, col, day) in cells {
+            while weeks[col].len() <= row {
+                weeks[col].push(ContributionDay {
+                    count: 0,
+                    color: String::new(),
+                    date: String::new(),
+                });
+            }
+            weeks[col][row] = day;
+        }
+
+        let weeks: Vec<ContributionWeek> = weeks
+            .into_iter()
+            .filter(|w| !w.is_empty())
+            .map(|days| ContributionWeek { days })
+            .collect();
+
         Some(ContributionData { weeks, total })
+    }
+
+    fn extract_total_from_html(html: &str) -> Option<u32> {
+        let pos = html.find("in the last year")?;
+        let before = &html[..pos];
+        let lines: Vec<&str> = before.lines().collect();
+        for i in (0..lines.len()).rev() {
+            let line = lines[i].trim();
+            if let Ok(n) = line.parse::<u32>() {
+                return Some(n);
+            }
+        }
+        None
     }
 }
 
