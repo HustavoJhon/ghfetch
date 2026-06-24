@@ -6,51 +6,51 @@
   <img src="https://img.shields.io/badge/theme-Gruvbox-green.svg" alt="Theme">
 </p>
 
-A **Neofetch/Fastfetch-inspired CLI tool** for displaying GitHub profile information with system stats, all wrapped in a beautiful retro-terminal **Gruvbox** aesthetic.
+**ghfetch** es una herramienta CLI inspirada en Neofetch y Fastfetch que muestra tu perfil de GitHub junto con informacion del sistema, todo con una estetica retro-terminal en tema **Gruvbox**.
+
+Muestra tu avatar en ASCII, estadisticas del sistema, y un grafico de contribuciones real — todo en una sola pantalla responsive.
 
 ```
-☀️ Buenas tardes, Gustavo Jhon
+   ░░░░░░░░░░░░░░░░░░░░░░░░░░░░     👻 OS  ·············· Arch Linux
+   ░░▒▒▓▓▓▓▓▓▓▒▒░░░░░░░░░░░░░░░     👻 Kernel ········· 6.12.10-arch1-1
+   ░▒▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒░░░░░░░░░     👻 CPU ············ AMD Ryzen 5 3600
+   ░▒▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒░░░░░░░░░     👻 RAM ············ 8.2 GiB / 16 GiB
+   ░▒▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒░░░░░░░░     👻 Disk ··········· 120 GiB / 445 GiB
+   ░░▒▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒░░░░░░░     👻 Shell ·········· zsh
+   ░░░▒▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒░░░░░░░     👻 Terminal ······· kitty
+   ░░░░░▒▓▓▓▓▓▓▓▓▓▓▓▓▒▒░░░░░░░░     👻 Res ············ 1920x1080
+   ░░░░░░░░░▒▒▓▓▓▒▒▒░░░░░░░░░░░░     👻 Uptime ········· 3h 42m
+   ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░     👻 Arch ··········· x86_64
 
-Gustavo Jhon
-@HustavoJhon
-👥 25  👤 9  📦 16
+                                      73 contribuciones  Menos █ █ █ █  Mas
 
-       ░░░░░░░░░░░░░░░░░░░░░░░     👻 OS  Arch Linux
-     ░▒▒▒▓▓▓▓▓▓▒▒░░░░░░░░░░░░░░     👻 Kernel  7.0.9-arch2-1
-    ░░▒▓▓▓▓▓▓▓▓▓▓▒░░░░░░░▒▒░░░░     👻 CPU  AMD Ryzen 5 3600
-    ░░▒▓▓▓▓▓▓▓▓▒▒░░░░░░░▒▓▓▒░░░     👻 RAM  8.2 GiB / 16 GiB
-    ░▒▓▓▓▓▓▓▓▓▒░░░░░░░░▒▓▓▓▓▒░░     👻 Shell  zsh
+                                        ░░░░░░░░░░░░░░░▒░░░░░░░░░▒░░░░▓▓░░
+                                        ░░░░░░░░░░░░░▒░░░░░░░░░▒▓░░░░░▓▓░░
+                                        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓░░
+                                        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒░
 
-Contribuciones GitHub: 74
-
-  ░░░░░░░░░░░░░░▒░░░░░░░░░░░░░▒░░░░▓░░░░░▒░░░░░▒░░░░░░░░░░░░░░
-  ░░░░▒░░░░░░▒░░░░░░░░░░░░░░░░░░░▒░░░░░▒░░░▒░░░░░░░░░░░░░░░░░░
-  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒▒
-  ░░░▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-fetched in 115ms
+   fetched in 110ms
 ```
 
 ---
 
-## Features
+## Caracteristicas
 
-- **ASCII Avatar** — Downloads your GitHub avatar and renders it as colored ASCII art
-- **System Info** — OS, kernel, CPU, GPU, RAM, disk, shell, terminal, resolution, uptime, arch
-- **GitHub Profile** — Name, bio, followers, following, repos
-- **Dynamic Greeting** — Time-based Spanish greeting (Buenos dias/tardes/noches)
-- **Contribution Graph** — GitHub-style ASCII contribution calendar
-- **Responsive Layout** — Adapts to terminal width (horizontal/vertical)
-- **Fast** — <300ms startup with caching; 115ms cached
-- **Gruvbox Dark Theme** — Consistent retro color palette
-- **Cross-platform** — Linux, macOS, Windows
-- **Configurable** — TOML config file with all options
+- **Avatar en ASCII** — Descarga tu foto de GitHub y la convierte en arte ASCII con bloques de color Gruvbox
+- **Deteccion automatica** — Lee tu usuario desde `git config github.user` o `gh auth status`
+- **Info del sistema** — SO, kernel, CPU, GPU, RAM, disco, shell, terminal, resolucion, uptime, arquitectura
+- **Grafico de contribuciones** — Calendario ASCII del ano actual con datos reales de GitHub
+- **Layout responsive** — Avatar a la izquierda, info y contribuciones apiladas a la derecha
+- **Tema Gruvbox Dark** — Paleta de colores cohesiva con iconos fantasma por categoria
+- **Rapido** — ~100ms cacheado, ~800ms primera ejecucion
+- **Multiplataforma** — Linux, macOS, Windows
+- **Configurable** — Archivo TOML con todas las opciones
 
 ---
 
-## Installation
+## Instalacion
 
-### Quick install (recommended)
+### Instalador automatico (recomendado)
 
 ```bash
 git clone https://github.com/hustavojhon/ghfetch.git
@@ -58,83 +58,79 @@ cd ghfetch
 bash install.sh
 ```
 
-The installer will ask for your GitHub username, optionally a token, and set everything up.
+El instalador detecta tu usuario de GitHub automaticamente, te pide un token (opcional) y configura todo.
 
-### From source
+### Desde codigo fuente
 
 ```bash
 git clone https://github.com/hustavojhon/ghfetch.git
 cd ghfetch
 cargo build --release
-sudo cp target/release/ghfetch /usr/local/bin/
+cp target/release/ghfetch ~/.local/bin/
 ```
 
-### From crates.io
+### Requisitos
 
-```bash
-cargo install ghfetch
-```
+- Rust 1.95+
+- Git (para deteccion automatica de usuario)
 
 ---
 
-## Usage
+## Uso
 
 ```bash
-# Default — shows your profile
-ghfetch
-
-# Show a different GitHub user
-ghfetch -u torvalds
-
-# Disable sections
-ghfetch --no-avatar
-ghfetch --no-system
-ghfetch --no-contributions
-
-# Customize avatar width
-ghfetch -w 40
-
-# Limit contribution graph weeks
-ghfetch -m 26
-
-# Use Nerd Font icons
-ghfetch --nerd-font-icons
-
-# Custom config file
-ghfetch -c ~/.config/ghfetch/custom.toml
+ghfetch                          # Tu perfil (detectado automaticamente)
+ghfetch -u torvalds              # Perfil de otro usuario
+ghfetch -w 50                    # Avatar mas grande
+ghfetch --no-avatar              # Solo info del sistema
+ghfetch --no-contributions       # Ocultar grafico
+ghfetch --nerd-font-icons        # Iconos Nerd Font en vez de emojis
 ```
 
-### Options
+### Opciones
 
-| Flag | Short | Description |
+| Flag | Corta | Descripcion |
 |------|-------|-------------|
-| `--username` | `-u` | GitHub username (default: hustavojhon) |
-| `--config` | `-c` | Path to config file |
-| `--no-avatar` | | Hide the ASCII avatar |
-| `--no-system` | | Hide system information |
-| `--no-header` | | Hide the profile header |
-| `--no-contributions` | | Hide the contribution graph |
-| `--avatar-width` | `-w` | Set avatar width in characters |
-| `--max-weeks` | `-m` | Max weeks in contribution graph |
-| `--nerd-font-icons` | | Use Nerd Font glyphs instead of emojis |
+| `--username` | `-u` | Usuario de GitHub (auto-detectado si no se especifica) |
+| `--config` | `-c` | Ruta al archivo de configuracion |
+| `--no-avatar` | | Oculta el avatar ASCII |
+| `--no-system` | | Oculta info del sistema |
+| `--no-contributions` | | Oculta grafico de contribuciones |
+| `--avatar-width` | `-w` | Ancho del avatar en caracteres |
+| `--nerd-font-icons` | | Usa glifos Nerd Font |
 
 ---
 
-## Configuration
+## Deteccion de usuario
 
-Create `~/.config/ghfetch/config.toml`:
+ghfetch intenta detectar tu usuario de GitHub en este orden:
+
+1. Flag `-u` (maxima prioridad)
+2. Variable de entorno `GHFETCH_USERNAME`
+3. `git config --global github.user`
+4. `gh auth status` (GitHub CLI)
+5. Archivo de configuracion `~/.config/ghfetch/config.toml`
+
+Si nada funciona, ghfetch te pide que configures uno.
+
+Para guardar tu usuario permanentemente:
+
+```bash
+git config --global github.user TU_USUARIO
+```
+
+---
+
+## Configuracion
+
+Archivo `~/.config/ghfetch/config.toml`:
 
 ```toml
-username = "hustavojhon"
-
-# GitHub token for higher API rate limits (5000 req/h)
-# github_token = "ghp_xxxxxxxxxxxx"
+username = ""
 
 [display]
 show_avatar = true
 show_system_info = true
-show_header = true
-show_greeting = true
 show_contributions = true
 nerd_font_icons = false
 max_contrib_weeks = 53
@@ -143,118 +139,92 @@ max_contrib_weeks = 53
 avatar_ttl_hours = 24
 profile_ttl_hours = 1
 contributions_ttl_hours = 2
-cache_dir = ".cache/ghfetch"
 
 [icons]
 ghost = "👻"
 
 [icons.overrides]
 # os = "󰻀"
-# kernel = "󰌽"
 # cpu = "󰻠"
 # ram = "󰘚"
 ```
 
-See [config.example.toml](config.example.toml) for all options.
+### Variables de entorno
 
-### Environment variables
-
-| Variable | Description |
-|----------|-------------|
-| `GITHUB_TOKEN` | GitHub personal access token |
-| `GHFETCH_USERNAME` | Default username |
-| `GHFETCH_CONFIG` | Path to config file |
+| Variable | Proposito |
+|----------|-----------|
+| `GITHUB_TOKEN` | Token de acceso personal (5000 req/h) |
+| `GHFETCH_USERNAME` | Usuario por defecto |
+| `GHFETCH_CONFIG` | Ruta al archivo de configuracion |
 
 ---
 
-## Architecture
+## Arquitectura
 
 ```
-ghfetch/
-├── src/
-│   ├── main.rs           # CLI entry point, argument parsing
-│   ├── theme.rs          # Gruvbox color palette, ANSI helpers, icons
-│   ├── config.rs         # TOML config loading, defaults
-│   ├── cache.rs          # File-based caching with TTL
-│   ├── system.rs         # Cross-platform system info (sysinfo)
-│   ├── github.rs         # GitHub REST & GraphQL API client
-│   ├── avatar.rs         # Avatar download, resize, ASCII conversion
-│   ├── greeting.rs       # Time-based dynamic greeting (Spanish)
-│   ├── contributions.rs  # Contribution graph ASCII renderer
-│   └── renderer.rs       # Responsive layout engine
-├── Cargo.toml
-├── config.example.toml
-└── README.md
+src/
+├── main.rs           # Punto de entrada, CLI, orquestacion
+├── theme.rs          # Paleta Gruvbox, utilidades ANSI, iconos
+├── config.rs         # Carga de archivo TOML, defaults
+├── cache.rs          # Cache en disco con TTL por clave
+├── system.rs         # Informacion del sistema multiplataforma
+├── github.rs         # Cliente REST + GraphQL para GitHub
+├── avatar.rs         # Descarga, resize y conversion a ASCII
+├── greetings.rs      # Saludo dinamico (desactivado por defecto)
+├── contributions.rs  # Renderizado del grafico de contribuciones
+└── renderer.rs       # Motor de layout responsive
 ```
 
-### Dependencies
+### Dependencias principales
 
-| Crate | Purpose |
-|-------|---------|
-| `clap` | CLI argument parsing |
-| `toml` + `serde` | Config file handling |
-| `ureq` | HTTP client (GitHub API) |
-| `image` | Avatar image processing |
-| `sysinfo` | Cross-platform system information |
-| `chrono` | Date/time handling |
-| `terminal_size` | Terminal dimension detection |
-| `dirs` | XDG directory resolution |
-
----
-
-## Performance
-
-- **First run**: ~500-1000ms (network requests + avatar processing)
-- **Cached run**: ~100-150ms (all data from disk)
-- **Binary size**: ~3.6 MB (includes image processing + TLS)
-
-Caching strategy:
-- Avatar images: 24h TTL
-- GitHub profile data: 1h TTL
-- Contribution data: 2h TTL
-- Cache stored in `~/.cache/ghfetch/`
+| Crate | Uso |
+|-------|-----|
+| `clap` | Parseo de argumentos CLI |
+| `toml` + `serde` | Archivos de configuracion |
+| `ureq` | Cliente HTTP para API de GitHub |
+| `image` | Procesamiento de avatar |
+| `sysinfo` | Informacion del sistema |
+| `chrono` | Fechas y horas |
+| `terminal_size` | Deteccion de tamano de terminal |
+| `dirs` | Directorios XDG |
 
 ---
 
-## Roadmap / Future Improvements
+## Rendimiento
 
-- [ ] Ghost/Pac-Man Nerd Font glyph discovery and mapping
-- [ ] Additional theme presets (Nord, Catppuccin, Tokyo Night)
-- [ ] Custom ASCII art loader for local avatars
-- [ ] `--watch` mode with live updates
-- [ ] JSON output mode for scripting
-- [ ] iTerm2/Kitty inline image support (no ASCII conversion needed)
-- [ ] Package manager distribution (AUR, Homebrew, Scoop)
-- [ ] GitHub Actions integration for CI/CD badges
-- [ ] Multi-panel layouts (compact, detailed, minimal)
-- [ ] Language/tool stats from GitHub
-- [ ] Customizable color palettes via config
+- **Primera ejecucion**: ~800ms (descarga avatar + API)
+- **Ejecucion cacheada**: ~110ms
+- **Binario**: ~3.6 MB
+
+Estrategia de cache:
+- Avatar: 24h
+- Perfil: 1h
+- Contribuciones: 2h
+- Directorio: `~/.cache/ghfetch/`
 
 ---
 
-## Why Rust?
+## Roadmap
 
-| Factor | Rust |
-|--------|------|
-| **Startup time** | <100ms (no runtime) |
-| **Binary size** | ~3.6MB stripped |
-| **Cross-compilation** | First-class support |
-| **Distribution** | Single static binary |
-| **Memory safety** | Compile-time guarantees |
-| **Ecosystem** | Mature CLI + image + HTTP crates |
+- [ ] Temas adicionales (Nord, Catppuccin, Tokyo Night)
+- [ ] Modo `--watch` con actualizacion en vivo
+- [ ] Salida JSON para scripting
+- [ ] Soporte de imagenes inline (iTerm2/Kitty)
+- [ ] Paquetes para AUR, Homebrew, Scoop
+- [ ] Estadisticas de lenguajes desde GitHub
 
 ---
 
-## Contributing
+## Contribuir
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run `cargo build` and `cargo test`
-5. Submit a pull request
+1. Hace un fork
+2. Crea una rama (`git checkout -b feature/nueva-cosa`)
+3. Hace tus cambios
+4. Ejecuta `cargo build` y `cargo clippy`
+5. Envia un pull request
 
 ---
 
-## License
+## Licencia
 
 MIT © [Gustavo Jhon](https://github.com/hustavojhon)
