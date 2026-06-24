@@ -136,8 +136,8 @@ fn main() {
     };
 
     let right_height = renderer::right_panel_height(&system, contributions.as_ref(), &config);
-    let desired_width = right_height;
-    let max_avatar_width = term_width.saturating_sub(45) / 2;
+    let desired_width = (right_height as f64 * 2.0) as usize;
+    let max_avatar_width = term_width.saturating_sub(45);
     let avatar_width = config.display.avatar_width.unwrap_or_else(|| {
         desired_width.clamp(16, max_avatar_width.max(16))
     });

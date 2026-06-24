@@ -37,8 +37,9 @@ pub fn fetch_ascii_avatar(
                     row.iter()
                         .map(|rgb| {
                             format!(
-                                "{}  {}",
+                                "{}{}{}",
                                 Ansi::bg_rgb(rgb[0], rgb[1], rgb[2]),
+                                ' ',
                                 Ansi::reset()
                             )
                         })
@@ -46,7 +47,7 @@ pub fn fetch_ascii_avatar(
                         .join("")
                 })
                 .collect(),
-            width: cached.width * 2,
+            width: cached.width,
         });
     }
 
@@ -107,8 +108,9 @@ pub fn fetch_ascii_avatar(
             row.iter()
                 .map(|rgb| {
                     format!(
-                        "{}  {}",
+                        "{}{}{}",
                         Ansi::bg_rgb(rgb[0], rgb[1], rgb[2]),
+                        ' ',
                         Ansi::reset()
                     )
                 })
@@ -117,11 +119,9 @@ pub fn fetch_ascii_avatar(
         })
         .collect();
 
-    let visible_width = target_width * 2;
-
     Some(AvatarArt {
         lines: art_lines,
-        width: visible_width,
+        width: target_width,
     })
 }
 
