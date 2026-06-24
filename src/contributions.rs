@@ -58,9 +58,23 @@ pub fn render_graph(data: &ContributionData, _max_weeks: usize) -> String {
     output.push('\n');
     output.push('\n');
 
+    let month_starts: Vec<usize> = filtered
+        .windows(2)
+        .enumerate()
+        .filter(|(_, w)| {
+            let d1 = &w[0].days[0].date;
+            let d2 = &w[1].days[0].date;
+            d1.len() >= 7 && d2.len() >= 7 && d1[5..7] != d2[5..7]
+        })
+        .map(|(i, _)| i + 1)
+        .collect();
+
     for day_of_week in 0..7 {
         let mut row = String::new();
-        for week in &filtered {
+        for (wi, week) in filtered.iter().enumerate() {
+            if month_starts.contains(&wi) {
+                row.push(' ');
+            }
             if day_of_week < week.days.len() {
                 let day = &week.days[day_of_week];
                 if day.date >= cutoff {
