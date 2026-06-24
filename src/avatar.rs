@@ -6,8 +6,7 @@ use std::io::{Cursor, Read};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct CachedAvatar {
-    pixels: Vec<Vec<u8>>,
-    bg_idx: u8,
+    pixels: Vec<Vec<[u8; 3]>>,
     width: usize,
     height: usize,
 }
@@ -24,7 +23,7 @@ pub fn fetch_ascii_avatar(
     ttl_hours: u64,
 ) -> Option<AvatarArt> {
     let cache_key = format!(
-        "avatar_v2_{}_{}",
+        "avatar_v3_{}_{}",
         avatar_url.split('/').last().unwrap_or("avatar"),
         target_width
     );
@@ -36,12 +35,10 @@ pub fn fetch_ascii_avatar(
                 .iter()
                 .map(|row| {
                     row.iter()
-                        .map(|ci| {
-                            let (r, g, b) = Gruvbox::rgb(*ci);
+                        .map(|rgb| {
                             format!(
-                                "{}{}{}",
-                                Ansi::bg_rgb(r, g, b),
-                                ' ',
+                                "{}  {}",
+                                Ansi::bg_rgb(rgb[0], rgb[1], rgb[2]),
                                 Ansi::reset()
                             )
                         })
@@ -49,7 +46,7 @@ pub fn fetch_ascii_avatar(
                         .join("")
                 })
                 .collect(),
-            width: cached.width,
+            width: cached.width * 2,
         });
     }
 
@@ -72,32 +69,33 @@ pub fn fetch_ascii_avatar(
         image::imageops::FilterType::Lanczos3,
     );
 
-    let mut pixels: Vec<Vec<u8>> = Vec::new();
+    let bg = Gruvbox::COLORS[Gruvbox::BG as usize];
+
+    let mut pixels: Vec<Vec<[u8; 3]>> = Vec::new();
 
     for y in 0..target_height {
-        let mut row: Vec<u8> = Vec::new();
+        let mut row: Vec<[u8; 3]> = Vec::new();
         for x in 0..target_width {
             let pixel = resized.get_pixel(x as u32, y as u32);
             let rgba = pixel.0;
             let alpha = rgba[3] as f32 / 255.0;
 
-            let color_idx = if alpha < 0.3 {
-                Gruvbox::BG
+            let (r, g, b) = if alpha < 0.3 {
+                (bg[0], bg[1], bg[2])
             } else {
-                let r = (rgba[0] as f32 * alpha + 40.0 * (1.0 - alpha)) as u8;
-                let g = (rgba[1] as f32 * alpha + 40.0 * (1.0 - alpha)) as u8;
-                let b = (rgba[2] as f32 * alpha + 40.0 * (1.0 - alpha)) as u8;
-                Gruvbox::nearest(r, g, b)
+                let r = (rgba[0] as f32 * alpha + bg[0] as f32 * (1.0 - alpha)) as u8;
+                let g = (rgba[1] as f32 * alpha + bg[1] as f32 * (1.0 - alpha)) as u8;
+                let b = (rgba[2] as f32 * alpha + bg[2] as f32 * (1.0 - alpha)) as u8;
+                (r, g, b)
             };
 
-            row.push(color_idx);
+            row.push([r, g, b]);
         }
         pixels.push(row);
     }
 
     let cached = CachedAvatar {
         pixels: pixels.clone(),
-        bg_idx: Gruvbox::BG,
         width: target_width,
         height: target_height,
     };
@@ -107,12 +105,10 @@ pub fn fetch_ascii_avatar(
         .iter()
         .map(|row| {
             row.iter()
-                .map(|ci| {
-                    let (r, g, b) = Gruvbox::rgb(*ci);
+                .map(|rgb| {
                     format!(
-                        "{}{}{}",
-                        Ansi::bg_rgb(r, g, b),
-                        ' ',
+                        "{}  {}",
+                        Ansi::bg_rgb(rgb[0], rgb[1], rgb[2]),
                         Ansi::reset()
                     )
                 })
@@ -121,9 +117,11 @@ pub fn fetch_ascii_avatar(
         })
         .collect();
 
+    let visible_width = target_width * 2;
+
     Some(AvatarArt {
         lines: art_lines,
-        width: target_width,
+        width: visible_width,
     })
 }
 
